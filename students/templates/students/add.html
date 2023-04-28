@@ -18,6 +18,13 @@
             <form action="{% url 'add' %}" method="POST">
               {% csrf_token %}
               {{ form.as_p }}
+              {% if form.errors %}
+                <div class="alert alert-danger" role="alert">
+                  {% for field, errors in form.errors.items %}
+                    <strong>{{ field }}:</strong> {{ errors|join:", " }}<br>
+                  {% endfor %}
+                </div>
+              {% endif %}
               <button type="submit" class="btn btn-primary">Add</button>
               <a href="{% url 'index' %}" class="btn btn-secondary">Cancel</a>
             </form>

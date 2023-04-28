@@ -4,6 +4,7 @@ from django.urls import reverse
 
 from .models import Student
 from .forms import StudentForm
+from django.db.models import Q
 
 # Create your views here.
 def index(request):
@@ -23,16 +24,22 @@ def add(request):
       new_first_name = form.cleaned_data['first_name']
       new_last_name = form.cleaned_data['last_name']
       new_email = form.cleaned_data['email']
-      new_field_of_study = form.cleaned_data['field_of_study']
+      new_branch = form.cleaned_data['branch']
+      new_sem = form.cleaned_data['sem']
+      new_division = form.cleaned_data['division']
       new_gpa = form.cleaned_data['gpa']
+      new_kt = form.cleaned_data['kt']
 
       new_student = Student(
         student_number = new_student_number,
         first_name = new_first_name,
         last_name = new_last_name,
         email = new_email,
-        field_of_study = new_field_of_study,
-        gpa = new_gpa
+        branch = new_branch,
+        sem = new_sem,
+        division = new_division,
+        gpa = new_gpa,
+        kt = new_kt
       )
       new_student.save()
       return render(request, 'students/add.html', {
@@ -67,3 +74,22 @@ def delete(request, id):
     student = Student.objects.get(pk=id)
     student.delete()
   return HttpResponseRedirect(reverse('index'))
+
+def search(request):
+    query = request.GET.get('search_query')
+    students = Student.objects.filter(
+        Q(first_name__icontains=query) |
+        Q(last_name__icontains=query) |
+        Q(student_number__icontains=query)
+    )
+    return render(request, 'students/index.html', {'students': students})
+
+def index(request):
+  sort_by = request.GET.get('sort_by')
+  if sort_by:
+    students = Student.objects.order_by(sort_by)
+  else:
+    students = Student.objects.all()
+  return render(request, 'students/index.html', {
+    'students': students
+  })

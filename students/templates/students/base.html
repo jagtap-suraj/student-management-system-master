@@ -28,6 +28,10 @@
               </a>
             </li>
           </ul>
+          <form class="d-flex" action="{% url 'search' %}" method="GET">
+            <input class="form-control me-2" type="search" name="search_query" placeholder="Type Name or Student No." aria-label="Search">
+            <button class="btn btn-outline-light" type="submit" style="color: white;">Search</button>
+          </form>
         </div>
       </div>
     </nav>
